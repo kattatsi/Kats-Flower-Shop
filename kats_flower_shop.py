@@ -182,6 +182,7 @@ def main():
     global action
     global gold
     game=True
+    print("Message from boyfriend<3")
     while (game):
         if(action==0):
             next()
