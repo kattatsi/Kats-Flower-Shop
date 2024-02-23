@@ -1,4 +1,7 @@
 import random
+
+# adding random comments to test git commit
+
 #tyxaio onoma gia fyto
 f=["tulip", "rose", "levander", "jasmine", "lily", "sunflower", "violet", "iris"]
 gold=5
@@ -61,6 +64,8 @@ def med(num):
         print ("Δεν έχεις άλλα φάρμακα. Αγόρασε τίποτα.")
     meds-=1
     garden[num-1].sick = False
+
+# heyyy look at me, i'm a new comment for GitHub!!!!
 
 def buy(type, quantity):
     global gold
