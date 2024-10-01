@@ -55,30 +55,20 @@ class game:
     
     #buy supplies
     def buy(self, type, quantity):
-        if self.gold==0:  
-            print("You don't have money meow")
-            return
-        if quantity<0:
-            print ("Give a number >0 dum dum")
+        if not self.enough(type, quantity):
             return
         if (type=="food"):
-            if self.gold-quantity<0:
-                print("You don't have enough money for all this")
-                return
             self.food+=quantity
             self.gold-=quantity
+            return 
         if (type=="meds"):
-            if self.gold-2*quantity<0:
-                print ("You don't have enough money for all this")
-                return
             self.meds+=quantity
             self.gold-=quantity*2
+            return 
         if (type=="seeds"):
-            if self.gold-quantity<0:
-                print("You don't have enough money for all this")
-                return
             self.seeds+=quantity
             self.gold-=quantity
+            return 
     
     #next move update 
     def next(self):
@@ -89,11 +79,11 @@ class game:
                 ph = random.randint(1, 100)
                 pt = random.randint(1, 100)
                 ps = random.randint(1, 100)
-            if (ph < 21):
+            if (ph < 21 and self.garden[i]!=0):
                 self.garden[i].hungry = True
-            if (pt < 31):
+            if (pt < 31 and self.garden[i]!=0):
                 self.garden[i].thirsty = True
-            if (ps < 16):
+            if (ps < 16 and self.garden[i]!=0):
                 self.garden[i].sick = True
         
         print("You are on round  ", self.round)
@@ -145,16 +135,16 @@ class game:
     def actions(self, charge):
         if (self.action-charge)==0:
             self.action=0
-            print("No more actions dum dum. You go to the next round. ")
-            return True
+            print("You finished your actions pooks. You go to the next round. ")
+            return 0
         elif (self.action-charge)<0:
             print ("You cant do that dum dum. You dont have enough actions. Choose something else")
             print ("You still have ", self.action, " actions. ")
-            return False
+            return -1
         else:
             self.action-=charge
             print ("You still have left ", self.action, " actions. ")
-            return True
+            return 1
         
     def no_plants(self):
         empty=True
@@ -163,6 +153,29 @@ class game:
                 empty=False
         return empty
     
+    def enough(self, type, quantity):
+        if self.gold==0:  
+            print("You don't have money meow")
+            return False
+        if quantity<0:
+            print ("Give a number >0 dum dum")
+            return False
+        if (type=="food"):
+            if self.gold-quantity<0:
+                print("You don't have enough money for all this. Buy less maybe...")
+                return False 
+            return True
+        if (type=="meds"):
+            if self.gold-2*quantity<0:
+                print ("You don't have enough money for all this. Buy less maybe..")
+                return False 
+            return True
+        if (type=="seeds"):
+            if self.gold-quantity<0:
+                print("You don't have enough money for all this. Buy less maybe..")
+                return False
+            return True
+
 
     def go(self, input):
         if self.action == 0:
@@ -185,26 +198,52 @@ class game:
             self.next()
             return
         if (input[0]=="plant"):
-            if self.actions(1):
+            act = self.actions(1)
+            if act == 0:
+                self.plant(int(input[1]))
+                self.next()
+            elif act == 1:
                 self.plant(int(input[1]))
             return
         if (input[0]=="sell"):
-            if self.actions(1):
+            act = self.actions(1)
+            if act == 0:
+                self.sell(int(input[1]))
+                self.next()
+            elif act == 1:
                 self.sell(int(input[1]))
             return
         if (input[0]=="feed"):
-            if self.actions(0.25):
+            act = self.actions(0.25)
+            if act == 0:
+                self.feed(int(input[1]))
+                self.next()
+            elif act == 1:
                 self.feed(int(input[1]))
             return
         if (input[0]=="water"):
-            if self.actions(0.25):
+            act = self.actions(0.25)
+            if act == 0:
+                self.water(int(input[1]))
+                self.next()
+            elif act == 1:
                 self.water(int(input[1]))
             return
         if (input[0]=="med"):
-            if self.actions(0.25):
+            act = self.actions(0.25)
+            if act == 0:
+                self.med(int(input[1]))
+                self.next()
+            elif act == 1:
                 self.med(int(input[1]))
             return
         if (input[0]=="buy"):
-            if self.actions(0.5):
-                self.buy(input[1], int(input[2]))
-            return
+            money = self.enough(input[1], int(input[2]))
+            if money:
+                act = self.actions(0.5)
+                if act == 0:
+                    self.buy(input[1], int(input[2]))
+                    self.next()
+                elif act == 1:
+                    self.buy(input[1], int(input[2]))
+            return 
