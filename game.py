@@ -15,25 +15,20 @@ class game:
     
     #plant new flower in position num
     def plant(self, num):
-        if self.seeds == 0:
-            print("No more seeds")
-        elif 0 <= num <=10:
-            self.garden[num-1] = Plant()
-            self.seeds -= 1
-        elif num > 10:
-            print("The garden has only 10 spots, bitch!")
+        self.garden[num-1] = Plant()
+        self.seeds -= 1
 
     #sell plant in position num
     def sell(self, num):
         if (self.garden[num-1]==0):
             print ("You dont have a plant in this spot to sell locoooo")
-        elif (self.garden[num-1].hungry==False and self.garden[num-1].thirsty==False and self.garden[num-1].sick==False and self.garden[num - 1].stage == 5):
+        elif (self.garden[num-1].hungry==False and self.garden[num-1].thirsty==False and self.garden[num-1].sick==False):
             self.gold = self.gold + 5
             self.garden[num - 1] = 0
             print("Sold plant ", num)
-            print ("You have ", gold, "gold.")
+            print ("You have ", self.gold, "gold.")
         else:
-            print ("You can't do that you duffus!")
+            print("Meow")
     
     #feed plant in position num
     def feed(self, num):
@@ -79,14 +74,14 @@ class game:
                 ph = random.randint(1, 100)
                 pt = random.randint(1, 100)
                 ps = random.randint(1, 100)
-            if (ph < 21 and self.garden[i]!=0):
-                self.garden[i].hungry = True
-            if (pt < 31 and self.garden[i]!=0):
-                self.garden[i].thirsty = True
-            if (ps < 16 and self.garden[i]!=0):
-                self.garden[i].sick = True
+                if (ph < 21 and self.garden[i]!=0):
+                    self.garden[i].hungry = True
+                if (pt < 31 and self.garden[i]!=0):
+                    self.garden[i].thirsty = True
+                if (ps < 16 and self.garden[i]!=0):
+                    self.garden[i].sick = True
         
-        print("You are on round  ", self.round)
+        print("You are on round ", self.round)
         print ("You have 4 actions. Use them wisely!")
         print ("You have ", self.gold, " gold.")
         print ("Stages: ", end=" ")
@@ -198,20 +193,40 @@ class game:
             self.next()
             return
         if (input[0]=="plant"):
-            act = self.actions(1)
-            if act == 0:
-                self.plant(int(input[1]))
-                self.next()
-            elif act == 1:
-                self.plant(int(input[1]))
+            n = int(input[1])
+            if self.seeds == 0:
+                print("No more seeds")
+                return
+            elif (n > 10 or n < 1):
+                print("The garden has only 10 spots (1-10), bitch!")
+                return 
+            elif self.garden[n-1]!=0:
+                print("You have a flower there!")
+                return 
+            else:
+                act = self.actions(1)
+                if act == 0:
+                    self.plant(n)
+                    self.next()
+                elif act == 1:
+                    self.plant(n)
             return
         if (input[0]=="sell"):
-            act = self.actions(1)
-            if act == 0:
-                self.sell(int(input[1]))
-                self.next()
-            elif act == 1:
-                self.sell(int(input[1]))
+            num = int(input[1])
+            if (self.garden[num-1]==0):
+                print ("You dont have a plant in this spot to sell locoooo")
+                return
+            elif (self.garden[num-1].hungry==False and self.garden[num-1].thirsty==False and self.garden[num-1].sick==False and self.garden[num - 1].stage == 5):
+                act = self.actions(1)
+                if act == 0:
+                    self.sell(num)
+                    self.next()
+                elif act == 1:
+                    self.sell(num)
+            elif (self.garden[num - 1].stage!= 5):
+                print("You can't sell this plant. Its not ready yet!")
+            elif (self.garden[num-1].hungry==True or self.garden[num-1].thirsty==True or self.garden[num-1].sick==True):
+                print("Nobody wantes to buy this. Its not looking good bruhhhh...")
             return
         if (input[0]=="feed"):
             act = self.actions(0.25)
